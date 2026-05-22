@@ -39,7 +39,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{font-family:'Rajdhani',sans-serif;background:var(--void);color:var(--text);overflow-x:hidden;cursor:none;}
+body{font-family:'Rajdhani',sans-serif;background:var(--void);color:var(--text);overflow-x:hidden;}
 body::after{content:'';position:fixed;inset:0;z-index:9990;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,100,.018) 2px,rgba(0,255,100,.018) 4px);pointer-events:none;}
 body::before{content:'';position:fixed;inset:0;z-index:9989;background:radial-gradient(ellipse 80% 80% at 50% 50%,transparent 60%,rgba(0,0,0,.7) 100%);pointer-events:none;}
 
@@ -762,7 +762,7 @@ footer{background:var(--void);border-top:1px solid var(--border);padding:1.5rem 
       <button class="ctab" onclick="showCert('events',this)">Events (7)</button>
     </div>
     <div class="cert-panel active" id="cp-all">
-      <div class="cert-tile"><div class="cert-iss">AWS · Cloud</div><div class="cert-title">AWS Academy Cloud Foundations</div><div class="cert-meta">Feb 2025 · 20 hrs · RA2432241050003</div></div>
+      <div class="cert-tile"><div class="cert-iss">AWS · Cloud</div><div class="cert-title">AWS Academy Cloud Foundations</div><div class="cert-meta">Feb 2025 · 20 hrs · Verified</div></div>
       <div class="cert-tile"><div class="cert-iss">Cisco · Cybersecurity</div><div class="cert-title">Introduction to Cybersecurity</div><div class="cert-meta">November 2025</div></div>
       <div class="cert-tile"><div class="cert-iss">HP LIFE · Cybersecurity</div><div class="cert-title">Introduction to Cybersecurity Awareness</div><div class="cert-meta">March 20, 2025</div></div>
       <div class="cert-tile"><div class="cert-iss">Great Learning · Security</div><div class="cert-title">Introduction to Ethical Hacking</div><div class="cert-meta">November 2024</div></div>
@@ -860,6 +860,7 @@ footer{background:var(--void);border-top:1px solid var(--border);padding:1.5rem 
 /* CURSOR */
 const co=document.getElementById('cx'),ci=document.getElementById('ci');
 let mx=0,my=0,ox=0,oy=0;
+document.body.style.cursor='none';
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;ci.style.left=mx+'px';ci.style.top=my+'px';});
 (function ac(){ox+=(mx-ox)*.12;oy+=(my-oy)*.12;co.style.left=ox+'px';co.style.top=oy+'px';requestAnimationFrame(ac);})();
 document.querySelectorAll('a,button,.proj-card,.proj-feat').forEach(el=>{
@@ -892,7 +893,11 @@ setTimeout(()=>document.querySelectorAll('.tm-bar').forEach(b=>b.style.width=b.d
     }
   }
   setInterval(draw,45);
-  window.addEventListener('resize',()=>{c.width=window.innerWidth;c.height=window.innerHeight;});
+  window.addEventListener('resize',()=>{
+    c.width=window.innerWidth;c.height=window.innerHeight;
+    const newCols=Math.floor(c.width/14);
+    while(drops.length<newCols)drops.push(Math.random()*-120);
+  });
 })();
 
 /* THREE.JS HERO */
@@ -919,8 +924,16 @@ setTimeout(()=>document.querySelectorAll('.tm-bar').forEach(b=>b.style.width=b.d
   });
   let t=0,mX=0,mY=0;
   document.addEventListener('mousemove',e=>{mX=(e.clientX/window.innerWidth-.5)*2;mY=(e.clientY/window.innerHeight-.5)*2;});
+  
+  let heroVisible=true;
+  const heroObs=new IntersectionObserver(entries=>{heroVisible=entries[0].isIntersecting;},{threshold:0.01});
+  const heroEl=document.getElementById('hero');
+  if(heroEl)heroObs.observe(heroEl);
+  
   (function an(){
-    requestAnimationFrame(an);t+=.006;
+    requestAnimationFrame(an);
+    if(!heroVisible)return;
+    t+=.006;
     const p=geo.attributes.position.array;
     for(let i=0;i<ROWS;i++)for(let j=0;j<COLS;j++){
       const idx=(i*COLS+j)*3,x=p[idx],y=p[idx+1];
@@ -1007,8 +1020,16 @@ setTimeout(()=>document.querySelectorAll('.tm-bar').forEach(b=>b.style.width=b.d
   });
   let t2=0,mX2=0;
   document.addEventListener('mousemove',e=>{mX2=(e.clientX/window.innerWidth-.5)*2;});
+  
+  let innovationVisible=false;
+  const innovationObs=new IntersectionObserver(entries=>{innovationVisible=entries[0].isIntersecting;},{threshold:0.01});
+  const innovationEl=document.getElementById('innovation-slide');
+  if(innovationEl)innovationObs.observe(innovationEl);
+  
   (function an(){
-    requestAnimationFrame(an);t2+=.005;
+    requestAnimationFrame(an);
+    if(!innovationVisible)return;
+    t2+=.005;
     // float monitors
     monitors.forEach((m,i)=>{m.mesh.position.y=m.orig[1]+Math.sin(t2+m.phase)*.25;m.mesh.rotation.y=((i-2)*.3)+Math.sin(t2*.3+i)*.04;});
     // orbit nodes
